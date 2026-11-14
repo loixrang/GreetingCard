@@ -4,29 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.greetingcard.ui.theme.GreetingCardTheme
 
 class MainActivity : ComponentActivity() {
@@ -34,27 +30,46 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            var name by remember {
+                mutableStateOf("")
+            }
+            var names by remember {
+                mutableStateOf(listOf<String>())
+            }
             GreetingCardTheme {
-                var count by remember {
-                    mutableIntStateOf(value = 0)
-                }
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(20.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    Modifier
+                        .fillMaxSize()
+                        .padding(26.dp)
                 ) {
-                    Text(
-                        text = count.toString(),
-                        fontSize = 30.sp
-                    )
-
-                    Button(onClick = {
-                        count++
-                    }) {
-                        Text(text = "Click Me!")
+                    Row(
+                        Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { text ->
+                                name = text
+                            },
+                            Modifier.weight(1f),
+                        )
+                        Spacer(Modifier.width(16.dp))
+                        Button({
+                            if(name.isNotBlank()) {
+                                names += name
+                                name = ""
+                            }
+                        }) {
+                            Text("Add")
+                        }
                     }
-                    Button({count = 0}) {
-                        Text("Clear count")
+                    LazyColumn {
+                        items(names) {
+                            currentName -> Text(
+                            text = currentName,
+                                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                            )
+                            HorizontalDivider()
+                        }
                     }
                 }
             }
